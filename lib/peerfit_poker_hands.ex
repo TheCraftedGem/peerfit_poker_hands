@@ -3,6 +3,7 @@ defmodule PeerfitPokerHands do
   # TODOS
   #   Load Poker.txt File And Parse Into 2 Hands
   #     Create Parser Module To Handle File
+        # User File.stream!(filename)
   #   Use Genserver To Keep Track Of Score And Return Score For Individual Player
   #     Otherwise use a reduce to keep track instead
   #   Pattern Match Individual winning hands

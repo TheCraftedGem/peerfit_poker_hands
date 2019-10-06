@@ -59,6 +59,18 @@ defmodule PeerfitPokerHandsTest do
     assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
   end
 
+    test "flush wins against straight" do
+    player_1 = PeerfitPokerHands.hand(["3D", "2H", "4S", "6C", "5S"])
+    player_2 = PeerfitPokerHands.hand(["3S", "4S", "3S", "7S", "TS"])
+
+    assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
+
+    player_1 = PeerfitPokerHands.hand(["2D", "5D", "6D", "7D", "KD"])
+    player_2 = PeerfitPokerHands.hand(["4S", "3D", "5C", "6H", "7S"])
+
+    assert "Player 1 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
+  end
+
   test "hand with 4 of a kind wins against 3 of a kind" do
     player_1 = PeerfitPokerHands.hand(["2D", "2H", "2S", "2C", "KS"])
     player_2 = PeerfitPokerHands.hand(["3S", "3D", "3D", "8H", "TS"])
