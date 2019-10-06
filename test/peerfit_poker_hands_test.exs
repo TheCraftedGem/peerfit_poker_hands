@@ -11,8 +11,7 @@ defmodule PeerfitPokerHandsTest do
 
     assert PeerfitPokerHands.evaluate(player_1, player_2) == "Player 2 Wins!"
 
-    assert PeerfitPokerHands.evaluate(player_1_second_hand, player_2_second_hand) ==
-             "Player 1 Wins!"
+    assert PeerfitPokerHands.evaluate(player_1_second_hand, player_2_second_hand) == "Player 1 Wins!"
 
     # Possible a function to call after a couple hands and check the score count
   end
@@ -59,9 +58,9 @@ defmodule PeerfitPokerHandsTest do
     assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
   end
 
-    test "flush wins against straight" do
+  test "flush wins against straight" do
     player_1 = PeerfitPokerHands.hand(["3D", "2H", "4S", "6C", "5S"])
-    player_2 = PeerfitPokerHands.hand(["3S", "4S", "3S", "7S", "TS"])
+    player_2 = PeerfitPokerHands.hand(["3S", "4S", "6S", "7S", "TS"])
 
     assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
 

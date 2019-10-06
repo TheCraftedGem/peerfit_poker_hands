@@ -147,6 +147,16 @@ defmodule PeerfitPokerHands do
       (last - first) == 4
   end
 
+  def check_flush?([{_, f}, {_, f}, {_, f}, {_, f}, {_, f}]), do: true
+  def check_flush?(_), do: false
+  def flush?(hand)  do
+    group_by_values(hand)
+    |> Map.values()
+    |> Enum.map(fn x -> List.flatten(x)
+        |> List.to_tuple() end)
+    |> check_flush?()
+  end
+
   def straight_value(hand) do
     group_by_values(hand)
     |> Enum.fetch!(-1)
@@ -177,11 +187,26 @@ defmodule PeerfitPokerHands do
 
   def evaluate(player_1, player_2) do
     with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
+    with true <- flush?(player_1) || flush?(player_2) do evaluate_flush(player_1, player_2) end ||
     with true <- straight?(player_1) || straight?(player_2) do evaluate_straight_hand(player_1, player_2) end ||
     with true <- three_of_a_kind?(player_1) || three_of_a_kind?(player_2) do evaluate_three_of_a_kind(player_1, player_2) end ||
     with true <- pairs?(player_1) && pairs?(player_2) do evaluate_pair_ties(player_1, player_2) end ||
     with true <- pairs?(player_1) || pairs?(player_2) do evaluate_pairs(player_1, player_2) end ||
     with true <- no_pairs?(player_1) && no_pairs?(player_2), do: evaluate_high_card(player_1, player_2)
+  end
+
+  def evaluate_flush(player_1, player_2) do
+    case flush?(player_1) && flush?(player_2) do
+      true  ->
+        evaluate_high_card(player_1, player_2)
+      false ->
+        flush_hand = Enum.filter([player_1, player_2], fn x -> flush?(x) end)
+        |> List.flatten()
+        case flush_hand == player_1 do
+          true -> "Player 1 Wins!"
+          false -> "Player 2 Wins!"
+        end
+    end
   end
 
   def evaluate_straight_hand(player_1, player_2) do
