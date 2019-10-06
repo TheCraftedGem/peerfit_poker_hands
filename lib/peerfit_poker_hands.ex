@@ -6,6 +6,8 @@ defmodule PeerfitPokerHands do
   #   Use Genserver To Keep Track Of Score And Return Score For Individual Player
   #     Otherwise use a reduce to keep track instead
   #   Pattern Match Individual winning hands
+  #   Refactor:
+  #     Move Validations To Seperate Modules Along With Other Stuff
   # Questions
   #  No validations?
 
