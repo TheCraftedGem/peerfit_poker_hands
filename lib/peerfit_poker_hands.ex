@@ -115,6 +115,14 @@ defmodule PeerfitPokerHands do
     end
   end
 
+  def four_of_a_kind?(hand) do
+    with true <- valid_hand?(hand) do
+      group_by_values(hand)
+      |>Map.values
+      |>Enum.any?(fn x -> Enum.count(x) == 4 end)
+    end
+  end
+
   def evaluate_pair_ties(player_1, player_2) do
     pair_value_of_player_1 = group_by_values(player_1)
                               |> Enum.filter(fn {_k, v} -> Enum.count(v) == 2 end)
@@ -126,7 +134,6 @@ defmodule PeerfitPokerHands do
                               |> Enum.map(fn x -> Tuple.to_list(x) end)
                               |> List.flatten
                               |> Enum.at(0)
-
     case pair_value_of_player_1 == pair_value_of_player_2 do
       true -> evaluate_high_card(player_1, player_2)
       false ->
@@ -139,22 +146,22 @@ defmodule PeerfitPokerHands do
     end
   end
 
-  def evaluate(hand_1, hand_2) do
-    with true <- three_of_a_kind?(hand_1) || three_of_a_kind?(hand_2) do evaluate_three_of_a_kind(hand_1, hand_2) end ||
-    with true <- pairs?(hand_1) && pairs?(hand_2) do evaluate_pair_ties(hand_1, hand_2) end ||
-    with true <- pairs?(hand_1) || pairs?(hand_2) do evaluate_pairs(hand_1, hand_2) end ||
-    with true <- no_pairs?(hand_1) && no_pairs?(hand_2), do: evaluate_high_card(hand_1, hand_2)
+  def evaluate(player_1, player_2) do
+    with true <- three_of_a_kind?(player_1) || three_of_a_kind?(player_2) do evaluate_three_of_a_kind(player_1, player_2) end ||
+    with true <- pairs?(player_1) && pairs?(player_2) do evaluate_pair_ties(player_1, player_2) end ||
+    with true <- pairs?(player_1) || pairs?(player_2) do evaluate_pairs(player_1, player_2) end ||
+    with true <- no_pairs?(player_1) && no_pairs?(player_2), do: evaluate_high_card(player_1, player_2)
   end
 
-  def evaluate_high_card(hand_1, hand_2)  do
-    case Enum.max(group_by_values(hand_1)) > Enum.max(group_by_values(hand_2))  do
+  def evaluate_high_card(player_1, player_2)  do
+    case Enum.max(group_by_values(player_1)) > Enum.max(group_by_values(player_2))  do
       true  -> "Player 1 Wins!"
       false -> "Player 2 Wins!"
     end
   end
 
-  def evaluate_three_of_a_kind(hand_1, hand_2)  do
-    case three_count(hand_1) > three_count(hand_2)  do
+  def evaluate_three_of_a_kind(player_1, player_2)  do
+    case three_count(player_1) > three_count(player_2)  do
       true  -> "Player 1 Wins!"
       false -> "Player 2 Wins!"
     end

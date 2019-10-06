@@ -36,13 +36,25 @@ defmodule PeerfitPokerHandsTest do
   end
 
   test "hand with 3 of a kind wins against pair" do
-    black = PeerfitPokerHands.hand(["2D", "2H", "2S", "8C", "KS"])
-    white = PeerfitPokerHands.hand(["3S", "3D", "9D", "8H", "TS"])
+    player_1 = PeerfitPokerHands.hand(["2D", "2H", "2S", "8C", "KS"])
+    player_2 = PeerfitPokerHands.hand(["3S", "3D", "9D", "8H", "TS"])
 
-    black_2 = PeerfitPokerHands.hand(["4D", "4H", "9H", "8C", "KS"])
-    white_2 = PeerfitPokerHands.hand(["3S", "3D", "3C", "8H", "TS"])
+    assert "Player 1 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
 
-    assert "Player 1 Wins!" == PeerfitPokerHands.evaluate(black, white)
-    assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(black_2, white_2)
+    player_1 = PeerfitPokerHands.hand(["4D", "4H", "9H", "8C", "KS"])
+    player_2 = PeerfitPokerHands.hand(["3S", "3D", "3C", "8H", "TS"])
+    assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
+  end
+
+  test "hand with 4 of a kind wins against 3 of a kind" do
+    player_1 = PeerfitPokerHands.hand(["2D", "2H", "2S", "2C", "KS"])
+    player_2 = PeerfitPokerHands.hand(["3S", "3D", "3D", "8H", "TS"])
+
+    assert "Player 1 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
+
+    player_1 = PeerfitPokerHands.hand(["4D", "4H", "4H", "8C", "KS"])
+    player_2 = PeerfitPokerHands.hand(["3S", "3D", "3C", "3H", "TS"])
+
+    assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
   end
 end
