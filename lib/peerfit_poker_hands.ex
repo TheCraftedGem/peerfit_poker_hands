@@ -198,7 +198,13 @@ defmodule PeerfitPokerHands do
     |> check_full_house()
   end
 
+  def straight_flush?(hand) do
+    straight?(hand) && flush?(hand)
+  end
+
   def evaluate(player_1, player_2) do
+    # Royal Flush
+    with true <- straight_flush?(player_1) || straight_flush?(player_2) do evaluate_straight_flush(player_1, player_2) end ||
     with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
     with true <- full_house?(player_1) || full_house?(player_2) do evaluate_full_house(player_1, player_2) end ||
     with true <- flush?(player_1) || flush?(player_2) do evaluate_flush(player_1, player_2) end ||
@@ -210,6 +216,19 @@ defmodule PeerfitPokerHands do
   end
 
 
+  def evaluate_straight_flush(player_1, player_2) do
+    case straight_flush?(player_1) && straight_flush?(player_2) do
+      true  ->
+        evaluate_high_card(player_1, player_2)
+      false ->
+        straight_flush_hand = Enum.filter([player_1, player_2], fn x -> straight_flush?(x) end)
+        |> List.flatten()
+        case straight_flush_hand == player_1 do
+          true -> "Player 1 Wins!"
+          false -> "Player 2 Wins!"
+        end
+    end
+  end
   def evaluate_full_house(player_1, player_2) do
     case full_house?(player_1) && full_house?(player_2) do
       true  ->
