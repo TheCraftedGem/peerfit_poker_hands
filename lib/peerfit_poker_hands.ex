@@ -132,6 +132,19 @@ defmodule PeerfitPokerHands do
     end
   end
 
+  def straight?(hand) do
+    sort_hand(hand)
+  end
+
+
+  def sort_hand(hand) do
+    # Turns hand to sorted list of tuples
+    Enum.sort(hand)
+    |> Enum.map(fn x -> String.codepoints(x) end)
+    |> Enum.map(fn x -> List.to_tuple(x) end)
+    IEx.pry
+  end
+
   def evaluate_pair_ties(player_1, player_2) do
     pair_value_of_player_1 = group_by_values(player_1)
                               |> Enum.filter(fn {_k, v} -> Enum.count(v) == 2 end)
@@ -157,10 +170,15 @@ defmodule PeerfitPokerHands do
 
   def evaluate(player_1, player_2) do
     with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
+    with true <- straight?(player_1) || straight?(player_2) do evaluate_straight_hand(player_1, player_2) end ||
     with true <- three_of_a_kind?(player_1) || three_of_a_kind?(player_2) do evaluate_three_of_a_kind(player_1, player_2) end ||
     with true <- pairs?(player_1) && pairs?(player_2) do evaluate_pair_ties(player_1, player_2) end ||
     with true <- pairs?(player_1) || pairs?(player_2) do evaluate_pairs(player_1, player_2) end ||
     with true <- no_pairs?(player_1) && no_pairs?(player_2), do: evaluate_high_card(player_1, player_2)
+  end
+
+  def evaluate_straight_hand(player_1, player_2) do
+
   end
 
   def evaluate_four_of_a_kind(player_1, player_2) do
