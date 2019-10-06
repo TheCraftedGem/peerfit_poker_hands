@@ -117,8 +117,4 @@ defmodule PeerfitPokerHandsTest do
 
     assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
   end
-
-
-
-
 end

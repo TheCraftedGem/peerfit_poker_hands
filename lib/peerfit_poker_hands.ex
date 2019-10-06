@@ -1,5 +1,9 @@
 require IEx
 defmodule PeerfitPokerHands do
+
+  defstruct [player_1_score: 0, player_2_score: 0]
+
+  alias PeerfitPokerHands.Parser
   # TODOS
   #   Load Poker.txt File And Parse Into 2 Hands
   #     Create Parser Module To Handle File
@@ -217,7 +221,6 @@ defmodule PeerfitPokerHands do
   end
 
   def evaluate(player_1, player_2) do
-    # Royal Flush
     with true <- royal_flush?(player_1) || royal_flush?(player_2) do evaluate_royal_flush(player_1, player_2) end ||
     with true <- straight_flush?(player_1) || straight_flush?(player_2) do evaluate_straight_flush(player_1, player_2) end ||
     with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
