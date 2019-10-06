@@ -133,16 +133,20 @@ defmodule PeerfitPokerHands do
   end
 
   def straight?(hand) do
-    sort_hand(hand)
+    #  Compare Range From Cards To Correct Range
+    {first, _} = group_by_values(hand)
+      |> Enum.fetch!(0)
+
+    {last, _} = group_by_values(hand)
+      |> Enum.fetch!(-1)
+
+    Enum.all?(first..last, fn x -> group_by_values(hand)[x] end) &&
+      (last - first) == 4
   end
 
-
-  def sort_hand(hand) do
-    # Turns hand to sorted list of tuples
-    Enum.sort(hand)
-    |> Enum.map(fn x -> String.codepoints(x) end)
-    |> Enum.map(fn x -> List.to_tuple(x) end)
-    IEx.pry
+  def straight_value(hand) do
+    group_by_values(hand)
+    |> Enum.fetch!(-1)
   end
 
   def evaluate_pair_ties(player_1, player_2) do
@@ -178,7 +182,20 @@ defmodule PeerfitPokerHands do
   end
 
   def evaluate_straight_hand(player_1, player_2) do
-
+    case straight?(player_1) && straight?(player_2) do
+      true  ->
+        case straight_value(player_1) > straight_value(player_2) do
+          true  -> "Player 1 Wins!"
+          false -> "Player 2 Wins!"
+        end
+      false ->
+        straight_hand = Enum.filter([player_1, player_2], fn x -> straight?(x) end)
+        |> List.flatten()
+        case straight_hand == player_1 do
+          true -> "Player 1 Wins!"
+          false -> "Player 2 Wins!"
+        end
+    end
   end
 
   def evaluate_four_of_a_kind(player_1, player_2) do
