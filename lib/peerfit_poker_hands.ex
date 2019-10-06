@@ -149,6 +149,7 @@ defmodule PeerfitPokerHands do
 
   def check_flush?([{_, f}, {_, f}, {_, f}, {_, f}, {_, f}]), do: true
   def check_flush?(_), do: false
+
   def flush?(hand)  do
     group_by_values(hand)
     |> Map.values()
