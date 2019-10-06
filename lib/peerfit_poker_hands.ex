@@ -164,6 +164,7 @@ defmodule PeerfitPokerHands do
   end
 
   def evaluate_pair_ties(player_1, player_2) do
+    # Create helper function for these variables
     pair_value_of_player_1 = group_by_values(player_1)
                               |> Enum.filter(fn {_k, v} -> Enum.count(v) == 2 end)
                               |> Enum.map(fn x -> Tuple.to_list(x) end)
@@ -186,14 +187,41 @@ defmodule PeerfitPokerHands do
     end
   end
 
+  def check_full_house([{a, _, a, _}, {b, _, b, _, b, _}]), do: true
+  def check_full_house([{a, _, a, _, a, _}, {b, _, b, _}]), do: true
+  def check_full_house(_), do: false
+
+  def full_house?(hand) do
+    group_by_values(hand)
+    |> Map.values()
+    |> Enum.map(fn x -> List.flatten(x) |> List.to_tuple() end)
+    |> check_full_house()
+  end
+
   def evaluate(player_1, player_2) do
     with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
+    with true <- full_house?(player_1) || full_house?(player_2) do evaluate_full_house(player_1, player_2) end ||
     with true <- flush?(player_1) || flush?(player_2) do evaluate_flush(player_1, player_2) end ||
     with true <- straight?(player_1) || straight?(player_2) do evaluate_straight_hand(player_1, player_2) end ||
     with true <- three_of_a_kind?(player_1) || three_of_a_kind?(player_2) do evaluate_three_of_a_kind(player_1, player_2) end ||
     with true <- pairs?(player_1) && pairs?(player_2) do evaluate_pair_ties(player_1, player_2) end ||
     with true <- pairs?(player_1) || pairs?(player_2) do evaluate_pairs(player_1, player_2) end ||
     with true <- no_pairs?(player_1) && no_pairs?(player_2), do: evaluate_high_card(player_1, player_2)
+  end
+
+
+  def evaluate_full_house(player_1, player_2) do
+    case full_house?(player_1) && full_house?(player_2) do
+      true  ->
+        evaluate_high_card(player_1, player_2)
+      false ->
+        full_house_hand = Enum.filter([player_1, player_2], fn x -> full_house?(x) end)
+        |> List.flatten()
+        case full_house_hand == player_1 do
+          true -> "Player 1 Wins!"
+          false -> "Player 2 Wins!"
+        end
+    end
   end
 
   def evaluate_flush(player_1, player_2) do
