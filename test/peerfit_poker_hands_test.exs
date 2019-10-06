@@ -117,4 +117,11 @@ defmodule PeerfitPokerHandsTest do
 
     assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
   end
+
+  test "player 1 score is tracked from games in text file" do
+    # This is the first attempt to score player before handling all ties and sad paths
+    PeerfitPokerHands.player_1_total_wins("poker.txt") == 378
+  end
+
+
 end

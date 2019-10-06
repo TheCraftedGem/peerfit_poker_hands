@@ -1,4 +1,3 @@
-require IEx
 defmodule PeerfitPokerHands do
 
   defstruct [player_1_score: 0, player_2_score: 0]
@@ -15,6 +14,11 @@ defmodule PeerfitPokerHands do
   #     Move Validations To Seperate Modules Along With Other Stuff
   # Questions
   #  No validations?
+
+  def player_1_total_wins(games) do
+    Parser.parse(games)
+    |> Enum.count(fn [player_1, player_2] -> PeerfitPokerHands.evaluate(player_1, player_2 ) == "Player 1 Wins!"  end)
+  end
 
   def values(), do:
     %{"2" => 2, "3" => 3,

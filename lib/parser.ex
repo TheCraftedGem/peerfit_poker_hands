@@ -1,4 +1,3 @@
-require IEx
 defmodule PeerfitPokerHands.Parser do
 
   def parse(filename) do
