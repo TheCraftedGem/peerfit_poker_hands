@@ -3,7 +3,6 @@ defmodule PeerfitPokerHandsTest do
   doctest PeerfitPokerHands
 
   test "evaluate hands for highest value hand with pairs" do
-
     player_1 = ["5H", "5C", "6S", "7S", "KD"]
     player_2 = ["2C", "3S", "8S", "8D", "TD"]
 
@@ -11,10 +10,12 @@ defmodule PeerfitPokerHandsTest do
     player_2_second_hand = ["2C", "5C", "7D", "8S", "QH"]
 
     assert PeerfitPokerHands.evaluate(player_1, player_2) == "Player 2 Wins!"
-    assert PeerfitPokerHands.evaluate(player_1_second_hand, player_2_second_hand) == "Player 1 Wins!"
+
+    assert PeerfitPokerHands.evaluate(player_1_second_hand, player_2_second_hand) ==
+             "Player 1 Wins!"
+
     # Possible a function to call after a couple hands and check the score count
   end
-
 
   test "hand with high card wins" do
     player_1 = PeerfitPokerHands.hand(["2D", "3H", "9H", "8C", "KS"])
@@ -57,8 +58,6 @@ defmodule PeerfitPokerHandsTest do
 
     assert "Player 2 Wins!" == PeerfitPokerHands.evaluate(player_1, player_2)
   end
-
-
 
   test "hand with 4 of a kind wins against 3 of a kind" do
     player_1 = PeerfitPokerHands.hand(["2D", "2H", "2S", "2C", "KS"])
