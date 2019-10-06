@@ -15,6 +15,7 @@ defmodule PeerfitPokerHands do
   # Questions
   #  No validations?
 
+  @spec player_1_total_wins(Binary.t()) :: List.t()
   def player_1_total_wins(games) do
     Parser.parse(games)
     |> Enum.count(fn [player_1, player_2] -> PeerfitPokerHands.evaluate(player_1, player_2 ) == "Player 1 Wins!"  end)
@@ -33,12 +34,16 @@ defmodule PeerfitPokerHands do
 
   def hand(hand), do: hand
 
+  @spec valid_hand?(List.t()) :: boolean
   def valid_hand?(hand), do: card_count(hand) == 5 && all_valid_cards?(hand)
 
+  @spec card_count(List.t()) :: non_neg_integer
   def card_count(hand), do: Enum.count(hand)
 
+  @spec all_valid_cards?(List.t()) :: boolean
   def all_valid_cards?(hand), do: Enum.all?(hand, fn x -> valid_card?(x) == true end)
 
+  @spec valid_card?(Binary.t()) :: Boolean.t()
   def valid_card?(card) do
     case Enum.count(convert(card)) do
       2 -> valid_value?(Enum.at(convert(card), 0)) && valid_suit?(Enum.at(convert(card), -1))
@@ -48,6 +53,7 @@ defmodule PeerfitPokerHands do
     end
   end
 
+  @spec valid_value?(binary) :: boolean
   def valid_value?("10") do
     true
   end
@@ -56,10 +62,12 @@ defmodule PeerfitPokerHands do
     Enum.any?(Map.keys(values()), fn x -> x == value end)
   end
 
+  @spec valid_suit?(binary) :: boolean
   def valid_suit?(suit) do
     Enum.any?(Map.keys(suits()), fn x -> x == suit end)
   end
 
+  @spec convert(binary) :: [binary]
   def convert(card) do
     String.codepoints(card)
   end
