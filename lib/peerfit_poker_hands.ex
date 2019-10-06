@@ -202,8 +202,23 @@ defmodule PeerfitPokerHands do
     straight?(hand) && flush?(hand)
   end
 
+  def check_royal_flush([{"A", "S"}, {"T", "S"}, {"J", "S"}, {"Q", "S"}, {"K", "S"}]), do: true
+  def check_royal_flush([{"A", "C"}, {"T", "C"}, {"J", "C"}, {"Q", "C"}, {"K", "C"}  ]), do: true
+  def check_royal_flush([{"A", "H"}, {"T", "H"}, {"J", "H"}, {"Q", "H"}, {"K", "H"}  ]), do: true
+  def check_royal_flush([{"A", "D"}, {"T", "D"}, {"J", "D"}, {"Q", "D"}, {"K", "D"}  ]), do: true
+  def check_royal_flush(_), do: false
+
+
+  def royal_flush?(hand) do
+    group_by_values(hand)
+    |> Map.values()
+    |> Enum.map(fn x -> List.flatten(x) |> List.to_tuple() end)
+    |> check_royal_flush()
+  end
+
   def evaluate(player_1, player_2) do
     # Royal Flush
+    with true <- royal_flush?(player_1) || royal_flush?(player_2) do evaluate_royal_flush(player_1, player_2) end ||
     with true <- straight_flush?(player_1) || straight_flush?(player_2) do evaluate_straight_flush(player_1, player_2) end ||
     with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
     with true <- full_house?(player_1) || full_house?(player_2) do evaluate_full_house(player_1, player_2) end ||
@@ -213,6 +228,21 @@ defmodule PeerfitPokerHands do
     with true <- pairs?(player_1) && pairs?(player_2) do evaluate_pair_ties(player_1, player_2) end ||
     with true <- pairs?(player_1) || pairs?(player_2) do evaluate_pairs(player_1, player_2) end ||
     with true <- no_pairs?(player_1) && no_pairs?(player_2), do: evaluate_high_card(player_1, player_2)
+  end
+
+  def evaluate_royal_flush(player_1, player_2) do
+    case royal_flush?(player_1) && royal_flush?(player_2) do
+      true  ->
+        evaluate_high_card(player_1, player_2)
+      false ->
+        royal_flush_hand = Enum.filter([player_1, player_2], fn x -> royal_flush?(x) end)
+        |> List.flatten()
+        case royal_flush_hand == player_1 do
+          true -> "Player 1 Wins!"
+          false -> "Player 2 Wins!"
+        end
+    end
+
   end
 
 
