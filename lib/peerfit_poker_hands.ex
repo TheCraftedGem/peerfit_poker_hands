@@ -91,6 +91,15 @@ defmodule PeerfitPokerHands do
     |> div(6)
   end
 
+  def four_count(hand) do
+    Enum.max_by(group_by_values(hand), fn x -> tuple_size(x) end)
+    |> Tuple.to_list
+    |> List.flatten
+    |> List.delete_at(0)
+    |> Enum.count
+    |> div(8)
+  end
+
   def no_pairs?(hand) do
     with true <- valid_hand?(hand) do
       group_by_values(hand)
@@ -147,10 +156,18 @@ defmodule PeerfitPokerHands do
   end
 
   def evaluate(player_1, player_2) do
+    with true <- four_of_a_kind?(player_1) || four_of_a_kind?(player_2) do evaluate_four_of_a_kind(player_1, player_2) end ||
     with true <- three_of_a_kind?(player_1) || three_of_a_kind?(player_2) do evaluate_three_of_a_kind(player_1, player_2) end ||
     with true <- pairs?(player_1) && pairs?(player_2) do evaluate_pair_ties(player_1, player_2) end ||
     with true <- pairs?(player_1) || pairs?(player_2) do evaluate_pairs(player_1, player_2) end ||
     with true <- no_pairs?(player_1) && no_pairs?(player_2), do: evaluate_high_card(player_1, player_2)
+  end
+
+  def evaluate_four_of_a_kind(player_1, player_2) do
+    case four_count(player_1) > four_count(player_2)  do
+      true  -> "Player 1 Wins!"
+      false -> "Player 2 Wins!"
+    end
   end
 
   def evaluate_high_card(player_1, player_2)  do
